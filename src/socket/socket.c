@@ -102,13 +102,16 @@ void socket_listen(socket_t socket, char* (*handler)(char* message)) {
 
     char buf[BUFSZ];
     memset(buf, 0, BUFSZ);
-    recv(csock, buf, BUFSZ - 1, 0);
-    char* response = handler(buf);
-    size_t response_len = strlen(response);
-    send(csock, response, response_len + 1, 0);
-    free(response);
 
-    sprintf(buf, "remote endpoint: %.1000s\n", caddrstr);
+    recv(csock, buf, BUFSZ - 1, 0);
+
+    char* response = handler(buf);
+    if (response != NULL) {
+      size_t response_len = strlen(response);
+      send(csock, response, response_len + 1, 0);
+      free(response);
+    }
+
     send(csock, buf, strlen(buf) + 1, 0);
     close(csock);
   }
