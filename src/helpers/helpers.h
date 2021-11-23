@@ -4,5 +4,6 @@
 #include <stdbool.h>
 
 bool is_numeric_string(char* str);
+void server_validate_args(int argc, char** argv);
 
 #endif
