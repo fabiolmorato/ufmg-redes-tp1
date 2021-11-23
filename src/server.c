@@ -3,10 +3,10 @@
 #include <string.h>
 #include <unistd.h>
 #include "helpers/helpers.h"
-#include "socket/socket.h"
+#include "command/command.h"
 
 void validate_args(int argc, char** argv);
-char* receive_message(char* message);
+char* receive_message(char** message, unsigned int size);
 
 int main(int argc, char** argv) {
   validate_args(argc, argv);
@@ -17,16 +17,19 @@ int main(int argc, char** argv) {
   }
 
   unsigned int port = (unsigned int) atoi(argv[2]);
-  socket_t socket = socket_create(ip, port);
-  socket_listen(socket, receive_message);
+  command_start(ip, port);
+  command_register("banana", receive_message);
+  command_listen();
 
   return 0;
 }
 
-char* receive_message(char* message) {
+char* receive_message(char** message, unsigned int size) {
   char* response = malloc(sizeof(char) * 32);
   strncpy(response, "message received", 17);
-  printf("%s\n", message);
+  for (int i = 0; i < size; i++) {
+    printf("%s\n", message[i]);
+  }
   return response;
 }
 
