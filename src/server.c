@@ -6,13 +6,7 @@
 #include "socket/socket.h"
 
 void validate_args(int argc, char** argv);
-
-char* receive_message(char* message) {
-  char* response = malloc(sizeof(char) * 32);
-  strncpy(response, "message received", 17);
-  printf("%s\n", message);
-  return response;
-}
+char* receive_message(char* message);
 
 int main(int argc, char** argv) {
   validate_args(argc, argv);
@@ -21,12 +15,19 @@ int main(int argc, char** argv) {
   if (strcmp(argv[1], "v6") == 0) {
     strncpy(ip, "::1", 4);
   }
-  
+
   unsigned int port = (unsigned int) atoi(argv[2]);
-  socket_t socket = socket_create(argv[1], port);
+  socket_t socket = socket_create(ip, port);
   socket_listen(socket, receive_message);
 
   return 0;
+}
+
+char* receive_message(char* message) {
+  char* response = malloc(sizeof(char) * 32);
+  strncpy(response, "message received", 17);
+  printf("%s\n", message);
+  return response;
 }
 
 void validate_args(int argc, char** argv) {
