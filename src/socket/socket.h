@@ -6,7 +6,7 @@ typedef struct {
   struct sockaddr* addr;
 } socket_t;
 
-socket_t socket_create(char* version, unsigned int port);
+socket_t socket_create(char* address, unsigned int port);
 void socket_listen(socket_t socket, char* (*handler)(char* message));
 
 #endif
