@@ -1,0 +1,12 @@
+#ifndef SOCKET_H_INCLUDED
+#define SOCKET_H_INCLUDED
+
+typedef struct {
+  int socket;
+  struct sockaddr* addr;
+} socket_t;
+
+socket_t socket_create(char* version, unsigned int port);
+void socket_listen(socket_t socket, char* (*handler)(char* message));
+
+#endif
