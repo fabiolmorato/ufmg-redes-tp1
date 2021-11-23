@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include "helpers/helpers.h"
 #include "command/command.h"
+#include "middlewares/command-validator.h"
 
 void validate_args(int argc, char** argv);
 char* receive_message(char** message, unsigned int size);
@@ -18,7 +19,10 @@ int main(int argc, char** argv) {
   unsigned int port = (unsigned int) atoi(argv[2]);
 
   command_start(ip, port);
+
+  command_add_middleware(command_validator_middleware);
   command_register("banana", receive_message);
+
   command_listen();
 
   return 0;
