@@ -6,7 +6,6 @@
 #include "command/command.h"
 #include "middlewares/command-validator.h"
 
-void validate_args(int argc, char** argv);
 char* receive_message(char** message, unsigned int size);
 
 char ipv4[] = "127.0.0.1";
