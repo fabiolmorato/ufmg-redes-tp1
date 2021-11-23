@@ -8,9 +8,9 @@ bool command_validator_middleware(char** params, unsigned int size, char** respo
     size_t word_len = strlen(word);
 
     for (unsigned int j = 0; j < word_len; j++) {
-      char c = word[i];
+      char c = word[j];
 
-      if (!isalpha(c) || !islower(c)) {
+      if (!(c >= 'a' && c <= 'z')) {
         strncpy(*response, "invalid message", 16);
         return false;
       }
