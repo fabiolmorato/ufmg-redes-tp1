@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <stdbool.h>
 
 #include "../list/list.h"
 #include "pokedex.h"
@@ -26,6 +27,22 @@ int pokemon_index(char* desired) {
   return -1;
 }
 
+bool is_valid_pokemon_name(char* name) {
+  size_t len = strlen(name);
+
+  if (len > 10) return false;
+
+  for (int i = 0; i < len; i++) {
+    char c = name[i];
+
+    if (!(c >= 'a' && c <= 'z')) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
 char* pokedex_service_add_pokemon(char** pokemon, unsigned int size) {
   start_pokedex_if_necessary();
   char* response = malloc(1024 * sizeof(char));
@@ -43,6 +60,9 @@ char* pokedex_service_add_pokemon(char** pokemon, unsigned int size) {
 
     if (index > -1) {
       unsigned int size = sprintf(response + response_index, "%s already exists ", current_pokemon);
+      response_index += size;
+    } else if (!is_valid_pokemon_name(current_pokemon) {
+      unsigned int size = sprintf(response + response_index, "invalid message ");
       response_index += size;
     } else {
       pokemon_t* new_pokemon = malloc(sizeof(pokemon_t));
