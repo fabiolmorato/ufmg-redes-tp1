@@ -22,6 +22,9 @@ void handle_response(char* message) {
     exit(EXIT_FAILURE);
   }
 
+  size_t len = strlen(message);
+  message[len - 1] = '\0';
+
   printf("%s\n", message);
 }
 
