@@ -35,7 +35,7 @@ bool is_valid_pokemon_name(char* name) {
   for (int i = 0; i < len; i++) {
     char c = name[i];
 
-    if (!(c >= 'a' && c <= 'z')) {
+    if (!((c >= 'a' && c <= 'z') || (c >= '0' && c <= '9'))) {
       return false;
     }
   }
@@ -50,23 +50,18 @@ char* pokedex_service_add_pokemon(char** pokemon, unsigned int size) {
 
   for (unsigned int i = 0; i < size; i++) {
     char* current_pokemon = pokemon[i];
+    size_t new_pokemon_name_len = strlen(current_pokemon);
 
     int index = pokemon_index(current_pokemon);
 
     if (pokedex->length >= 40) {
       unsigned int size = sprintf(response + response_index, "limit exceeded ");
       response_index += size;
-    }
-
-    if (index > -1) {
+    } else if (index > -1) {
       unsigned int size = sprintf(response + response_index, "%s already exists ", current_pokemon);
-      response_index += size;
-    } else if (!is_valid_pokemon_name(current_pokemon)) {
-      unsigned int size = sprintf(response + response_index, "invalid message ");
       response_index += size;
     } else {
       pokemon_t* new_pokemon = malloc(sizeof(pokemon_t));
-      size_t new_pokemon_name_len = strlen(current_pokemon);
       new_pokemon->name = malloc((new_pokemon_name_len + 1) * sizeof(char));
       strncpy(new_pokemon->name, current_pokemon, new_pokemon_name_len + 1);
 
