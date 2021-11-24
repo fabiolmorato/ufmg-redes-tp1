@@ -109,8 +109,8 @@ void socket_listen(socket_t socket, char* (*handler)(char* message)) {
 
       for (;;) {
         len = recv(csock, buf + total, BUFSZ - 1 - total, 0);
-        if (buf[len - 1] == '\n') break;
         total += len;
+        if (buf[total - 1] == '\n') break;
       }
 
       len = strlen(buf);
