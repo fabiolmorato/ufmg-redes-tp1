@@ -24,6 +24,8 @@ int main(int argc, char** argv) {
   // command_add_middleware(command_validator_middleware);
   command_register("add", pokedex_add);
   command_register("list", pokedex_list);
+  command_register("remove", pokedex_remove);
+  command_register("exchange", pokedex_exchange);
 
   command_listen();
 

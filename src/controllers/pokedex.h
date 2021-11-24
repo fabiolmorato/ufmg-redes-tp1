@@ -3,5 +3,7 @@
 
 char* pokedex_add(char** pokemon, unsigned int size);
 char* pokedex_list(char** arguments, unsigned int size);
+char* pokedex_remove(char** arguments, unsigned int size);
+char* pokedex_exchange(char** arguments, unsigned int size);
 
 #endif

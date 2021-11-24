@@ -80,3 +80,50 @@ char* pokedex_service_list_pokedex(void) {
   response[response_index - 1] = '\0';
   return response;
 }
+
+char* pokedex_service_remove_pokemon(char* pokemon) {
+  start_pokedex_if_necessary();
+  char* response = malloc(1024 * sizeof(char));
+  
+  int index = pokemon_index(pokemon);
+
+  if (index == -1) {
+    sprintf(response, "%s does not exist", pokemon);
+    return response;
+  }
+
+  list_remove_at_index(pokedex, index);
+  sprintf(response, "%s removed", pokemon);
+
+  return response;
+}
+
+char* pokedex_service_exchange_pokemon(char* pokemon_out, char* pokemon_in) {
+  start_pokedex_if_necessary();
+  char* response = malloc(1024 * sizeof(char));
+
+  int index_out = pokemon_index(pokemon_out);
+
+  if (index_out == -1) {
+    sprintf(response, "%s does not exist", pokemon_out);
+    return response;
+  }
+
+  int index_in = pokemon_index(pokemon_in);
+
+  if (index_in > -1) {
+    sprintf(response, "%s already exists", pokemon_in);
+    return response;
+  }
+
+  pokemon_t** pokemons = (pokemon_t**) pokedex->values;
+  pokemon_t* pokemon = pokemons[index_out];
+
+  free(pokemon->name);
+  size_t pokemon_in_len = strlen(pokemon_in);
+  pokemon->name = malloc((pokemon_in_len + 1) * sizeof(char));
+  strncpy(pokemon->name, pokemon_in, pokemon_in_len + 1);
+
+  sprintf(response, "%s exchanged", pokemon_out);
+  return response;
+}

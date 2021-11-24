@@ -6,8 +6,8 @@ typedef struct {
 } pokemon_t;
 
 char* pokedex_service_add_pokemon(char** pokemon, unsigned int size);
-// char* pokedex_service_remove_pokemon(char* pokemon);
+char* pokedex_service_remove_pokemon(char* pokemon);
 char* pokedex_service_list_pokedex(void);
-// char* pokedex_service_exchange_pokemon(char* pokemon_out, char* pokemon_in);
+char* pokedex_service_exchange_pokemon(char* pokemon_out, char* pokemon_in);
 
 #endif
