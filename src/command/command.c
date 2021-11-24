@@ -93,7 +93,7 @@ char* message_runner(char* message) {
   char** arguments = (char**) splitted->values;
 
   if (!command_run(command, arguments, splitted->length, &response)) {
-    strncpy(response, "invalid message", 16);
+    strncpy(response, "kill", 16);
   }
 
   return response;
