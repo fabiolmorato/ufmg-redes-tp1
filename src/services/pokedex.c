@@ -61,7 +61,7 @@ char* pokedex_service_add_pokemon(char** pokemon, unsigned int size) {
     if (index > -1) {
       unsigned int size = sprintf(response + response_index, "%s already exists ", current_pokemon);
       response_index += size;
-    } else if (!is_valid_pokemon_name(current_pokemon) {
+    } else if (!is_valid_pokemon_name(current_pokemon)) {
       unsigned int size = sprintf(response + response_index, "invalid message ");
       response_index += size;
     } else {
