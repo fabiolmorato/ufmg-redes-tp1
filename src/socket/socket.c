@@ -110,13 +110,14 @@ void socket_listen(socket_t socket, char* (*handler)(char* message)) {
       for (;;) {
         len = recv(csock, buf + total, BUFSZ - 1 - total, 0);
         total += len;
-        if (buf[total - 1] == '\n') break;
+        if (total > 0 && buf[total - 1] == '\n') break;
       }
 
       len = strlen(buf);
 
+      if (len == 0) break;
+
       if (buf[len - 1] == '\n' || buf[len - 1] == '\r') buf[len - 1] = '\0';
-      printf("buf \"%s\"\n", buf);
 
       char* response = handler(buf);
 
@@ -132,7 +133,7 @@ void socket_listen(socket_t socket, char* (*handler)(char* message)) {
   }
 }
 
-void socket_send_message(char* address, unsigned int port_as_int, char* message, void (*callback)(char*)) {
+void socket_connect(char* address, unsigned int port_as_int, char* (*get_message)(void), void (*callback)(char*)) {
   struct sockaddr_storage storage;
   int s; // socket
   uint16_t port = htons(port_as_int);
@@ -167,18 +168,24 @@ void socket_send_message(char* address, unsigned int port_as_int, char* message,
 
   char* response = malloc(1024 * sizeof(char));
 
-	size_t count = send(s, message, strlen(message) + 1, 0);
-  unsigned int total = 0;
-
   for (;;) {
-		count = recv(s, response + total, 1024 - total, 0);
-		if (count == 0) {
-			break;
-		}
-    total += count;
-	}
+    char* message = get_message();
+    memset(response, 0, 1024);
 
-	close(s);
+    send(s, message, strlen(message), 0);
+    free(message);
 
-  callback(response);
+    size_t count = 0;
+    unsigned int total = 0;
+
+    for (;;) {
+      count = recv(s, response + total, 1024 - total, 0);
+      total += count;
+      if (response[total - 1] == '\n') break;
+    }
+
+    callback(response);
+  }
+
+  close(s);
 }

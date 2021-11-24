@@ -8,6 +8,6 @@ typedef struct {
 
 socket_t socket_create(char* address, unsigned int port);
 void socket_listen(socket_t socket, char* (*handler)(char* message));
-void socket_send_message(char* address, unsigned int port, char* message, void (*callback)(char*));
+void socket_connect(char* address, unsigned int port, char* (*get_message)(void), void (*callback)(char*));
 
 #endif
