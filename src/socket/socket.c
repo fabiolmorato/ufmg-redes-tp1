@@ -109,14 +109,13 @@ void socket_listen(socket_t socket, char* (*handler)(char* message)) {
 
       for (;;) {
         len = recv(csock, buf + total, BUFSZ - 1 - total, 0);
+        if (len == 0) break;
         total += len;
         if (total > 0 && buf[total - 1] == '\n') break;
       }
 
       len = strlen(buf);
-
       if (len == 0) break;
-
       if (buf[len - 1] == '\n' || buf[len - 1] == '\r') buf[len - 1] = '\0';
 
       char* response = handler(buf);
@@ -175,14 +174,7 @@ void socket_connect(char* address, unsigned int port_as_int, char* (*get_message
     send(s, message, strlen(message), 0);
     free(message);
 
-    size_t count = 0;
-    unsigned int total = 0;
-
-    for (;;) {
-      count = recv(s, response + total, 1024 - total, 0);
-      total += count;
-      if (response[total - 1] == '\n') break;
-    }
+    recv(s, response, 1024, 0);
 
     callback(response);
   }
