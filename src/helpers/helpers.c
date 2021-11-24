@@ -40,3 +40,23 @@ void server_validate_args(int argc, char** argv) {
     exit(EXIT_FAILURE);
   }
 }
+
+void client_validate_args(int argc, char** argv) {
+  if (argc != 3) {
+    fprintf(stderr, "Usage: %s <SERVER IP> <PORT>\n", argv[0]);
+    exit(EXIT_FAILURE);
+  }
+
+  if (!is_numeric_string(argv[2])) {
+    fprintf(stderr, "Port must be a positive number!\n");
+    fprintf(stderr, "Usage: %s <SERVER IP> <PORT>\n", argv[0]);
+    exit(EXIT_FAILURE);
+  }
+
+  unsigned int port = (unsigned int) atoi(argv[2]);
+  if (port < 1024 || port > 65535) {
+    fprintf(stderr, "Port is not in a valid range!\n");
+    fprintf(stderr, "Usage: %s <SERVER IP> <PORT>\n", argv[0]);
+    exit(EXIT_FAILURE);
+  }
+}
