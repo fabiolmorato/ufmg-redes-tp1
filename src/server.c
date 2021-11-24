@@ -22,8 +22,7 @@ int main(int argc, char** argv) {
 
   command_start(ip, port);
 
-  // this middleware invalidates the whole command if message does not follow specified properties, but this shouldn't be the case unfortunately
-  // command_add_middleware(command_validator_middleware);
+  command_add_middleware(command_validator_middleware);
   command_register("add", pokedex_add);
   command_register("list", pokedex_list);
   command_register("remove", pokedex_remove);

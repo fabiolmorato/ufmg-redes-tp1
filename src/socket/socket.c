@@ -100,19 +100,34 @@ void socket_listen(socket_t socket, char* (*handler)(char* message)) {
     char caddrstr[BUFSZ];
     addrtostr(caddr, caddrstr, BUFSZ);
 
-    char buf[BUFSZ];
-    memset(buf, 0, BUFSZ);
+    char* buf = malloc(BUFSZ * sizeof(char));
 
-    recv(csock, buf, BUFSZ - 1, 0);
+    for (;;) {
+      size_t len = 0;
+      unsigned int total = 0;
+      memset(buf, 0, BUFSZ);
 
-    char* response = handler(buf);
-    if (response != NULL) {
-      size_t response_len = strlen(response);
-      send(csock, response, response_len + 1, 0);
-      free(response);
+      for (;;) {
+        len = recv(csock, buf + total, BUFSZ - 1 - total, 0);
+        if (buf[len - 1] == '\n') break;
+        total += len;
+      }
+
+      len = strlen(buf);
+
+      if (buf[len - 1] == '\n' || buf[len - 1] == '\r') buf[len - 1] = '\0';
+      printf("buf \"%s\"\n", buf);
+
+      char* response = handler(buf);
+
+      if (response != NULL) {
+        size_t response_len = strlen(response);
+        response[response_len] = '\n';
+        send(csock, response, response_len + 1, 0);
+        free(response);
+      }
     }
 
-    send(csock, buf, strlen(buf) + 1, 0);
     close(csock);
   }
 }
