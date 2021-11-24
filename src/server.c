@@ -12,6 +12,8 @@
 char ipv4[] = "127.0.0.1";
 char ipv6[] = "::1";
 
+char* kill(char** arguments, unsigned int size);
+
 int main(int argc, char** argv) {
   server_validate_args(argc, argv);
 
@@ -26,8 +28,14 @@ int main(int argc, char** argv) {
   command_register("list", pokedex_list);
   command_register("remove", pokedex_remove);
   command_register("exchange", pokedex_exchange);
+  command_register("kill", kill);
 
   command_listen();
 
   return 0;
+}
+
+char* kill(char** arguments, unsigned int size) {
+  exit(EXIT_SUCCESS);
+  return NULL;
 }
