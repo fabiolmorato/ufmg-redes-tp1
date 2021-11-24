@@ -2,11 +2,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+
 #include "helpers/helpers.h"
 #include "command/command.h"
 #include "middlewares/command-validator.h"
 
-char* receive_message(char** message, unsigned int size);
+#include "controllers/pokedex.h"
 
 char ipv4[] = "127.0.0.1";
 char ipv6[] = "::1";
@@ -19,19 +20,12 @@ int main(int argc, char** argv) {
 
   command_start(ip, port);
 
-  command_add_middleware(command_validator_middleware);
-  command_register("banana", receive_message);
+  // this middleware invalidates the whole command if message does not follow specified properties, but this shouldn't be the case unfortunately
+  // command_add_middleware(command_validator_middleware);
+  command_register("add", pokedex_add);
+  command_register("list", pokedex_list);
 
   command_listen();
 
   return 0;
-}
-
-char* receive_message(char** message, unsigned int size) {
-  char* response = malloc(sizeof(char) * 32);
-  strncpy(response, "message received", 17);
-  for (int i = 0; i < size; i++) {
-    printf("%s\n", message[i]);
-  }
-  return response;
 }
