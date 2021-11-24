@@ -87,7 +87,7 @@ void socket_listen(socket_t socket, char* (*handler)(char* message)) {
   char addrstr[BUFSZ];
   addrtostr(addr, addrstr, BUFSZ);
   
-  while (1) {
+  for (;;) {
     struct sockaddr_storage cstorage;
     struct sockaddr* caddr = (struct sockaddr*) (&cstorage);
     socklen_t caddrlen = sizeof(cstorage);
@@ -115,4 +115,55 @@ void socket_listen(socket_t socket, char* (*handler)(char* message)) {
     send(csock, buf, strlen(buf) + 1, 0);
     close(csock);
   }
+}
+
+void socket_send_message(char* address, unsigned int port_as_int, char* message, void (*callback)(char*)) {
+  struct sockaddr_storage storage;
+  int s; // socket
+  uint16_t port = htons(port_as_int);
+
+  struct in_addr inaddr4;
+  if (inet_pton(AF_INET, address, &inaddr4)) {
+    struct sockaddr_in* addr4 = (struct sockaddr_in*) (&storage);
+    addr4->sin_family = AF_INET;
+    addr4->sin_port = port;
+    addr4->sin_addr = inaddr4;
+  }
+
+  struct in6_addr inaddr6;
+  if (inet_pton(AF_INET6, address, &inaddr6)) {
+    struct sockaddr_in6* addr6 = (struct sockaddr_in6*) (&storage);
+    addr6->sin6_family = AF_INET6;
+    addr6->sin6_port = port;
+    memcpy(&(addr6->sin6_addr), &inaddr6, sizeof(inaddr6));
+  }
+
+  s = socket(storage.ss_family, SOCK_STREAM, 0);
+  if (s == -1) {
+    fprintf(stderr, "Could not create socket!\n");
+    exit(EXIT_FAILURE);
+  }
+
+  struct sockaddr *addr = (struct sockaddr *)(&storage);
+	if (connect(s, addr, sizeof(storage)) != 0) {
+		fprintf(stderr, "Could not connect to socket!\n");
+    exit(EXIT_FAILURE);
+	}
+
+  char* response = malloc(1024 * sizeof(char));
+
+	size_t count = send(s, message, strlen(message) + 1, 0);
+  unsigned int total = 0;
+
+  for (;;) {
+		count = recv(s, response + total, 1024 - total, 0);
+		if (count == 0) {
+			break;
+		}
+    total += count;
+	}
+
+	close(s);
+
+  callback(response);
 }
